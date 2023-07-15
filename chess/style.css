@@ -1,0 +1,63 @@
+* {
+    margin:0;
+    padding:0;
+    box-sizing: border-box;
+}
+
+
+
+body {
+    background-color: rgb(230, 150, 2);
+    display: flex;
+    flex-direction: column;
+    height:100vh;
+
+}
+
+
+footer {
+    border-top: 2px solid black;
+    flex-grow:1;
+}
+
+header {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    border-bottom: 10px solid black;
+    flex-grow: 1;
+}
+main {
+    flex-grow: 10;
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+}
+.chessBoard {
+
+    border: 1px solid red;
+    
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 600px;
+    max-width: 600px;
+    min-height: 600px;
+    background-image:url(images/chineseChessPlate.png);
+    background-position: center center;
+    background-size: contain;
+    background-repeat:no-repeat;
+    position: relative;
+
+    
+}
+.piecePosition {
+    position:absolute;
+
+    /* border:1px solid black; */
+    height: 50px;
+    width: 50px;
+}
