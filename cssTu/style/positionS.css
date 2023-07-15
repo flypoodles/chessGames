@@ -1,0 +1,67 @@
+* {
+    margin:0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family:sans-serif;
+    font-size:1.5rem;
+    min-height: 200vh;
+}
+
+.outer {
+    border: 1px solid black;
+
+    width: 75vw;
+    height:85vh;
+    margin: 50px auto;
+    position: relative; /* child with absolute postion will be relative to this */ 
+}
+
+.inner {
+    border: 1px solid green;
+    margin: 12.5% auto;
+    height: 75%;
+    width: 75%;
+    position:sticky;
+    top:0;
+    
+}
+
+.box {
+    width:150px;
+    height: 150px;
+    padding: 1rem;
+    color:white;
+}
+
+.absolute {
+    background-color:blue;
+    position: absolute; /* absolute:  relative to the closest ancestor with not static postion */
+    top: 0;
+    left: 0; /* remove it from the page if set to -10000px */
+    z-index:1; /* axis perpendicular to the screen */
+
+}
+
+.relative {
+    background-color: red;
+    position:relative; /* relative to its parent container */
+    top:100px;
+    left:100px;
+}
+
+.fixed {
+    background-color: green;
+    position:fixed; /* fixed to the screen */
+    top: 100px;
+}
+
+.sticky{
+    background-color:black;
+    position:sticky; /* stick to the screen until user scroll out of the parent container */
+    top:0;
+}
+
+

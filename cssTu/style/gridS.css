@@ -1,0 +1,85 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    font-family:sans-serif;
+    min-height:100vh;
+    padding:20px;
+    display:grid;
+    grid-template-columns: repeat(9, 1fr);
+    grid-auto-rows: 75px auto 75px;
+    grid-template-areas: "hd hd hd hd hd hd hd hd hd" 
+                        "mn mn mn mn mn mn mn sb sb" 
+                        "ft ft ft ft ft ft ft ft ft";
+}
+
+
+.container {
+    grid-area:mn;
+    min-height:400px;
+    display:grid;
+    grid-template-columns: repeat(4, 1fr); /* grid-template-columnS: col1 col2 col3
+                                            fr - fraction of the screen*/
+                                            /* how wide each column is */
+                                            /* repeat: repeat(numColumns, size) */
+    grid-auto-rows: minmax(150px, auto); /* how high each row is. 150px is minimun, 
+                                        auto is adjust according to the height of the container*/
+    row-gap: 1em; /* gap between rows  gap: row column*/
+
+}
+.box {
+    background-color: black;
+    color:white;
+    font-size:2rem;
+    padding:0.5rem;
+
+
+}
+
+.box:first-child {
+    background-color: blue;
+    grid-column-start: 1; /* start at first vertical line */
+    grid-column-end: 4; /* end at 4th vertical line . basically it took 3 columns space*/
+    grid-row-start:1;
+    grid-row-end:3; /* took 2 rows */
+
+    display:grid;
+    align-content:center;
+    justify-content: center;
+    /* shorthand notation */
+    /* grid-column: start / end */
+    /* grid-row: start / end   */
+
+    /* shorthand notation for justify-content and align content */
+    /* place-content: align-contetn justify-content */
+
+}
+
+.box:nth-child(2) {
+    background-color: magenta;
+    grid-column: 1 / 5;
+    grid-row: 3 /4;
+}
+
+.el {
+    background-color: rebeccapurple;
+    color: white;
+    display:grid;
+    place-content: center;
+}
+
+.header {
+    grid-area: hd;
+}
+
+.sidebar {
+    grid-area: sb;
+    background-color: blue;
+}
+
+.footer {
+    grid-area: ft;
+
+}

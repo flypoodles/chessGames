@@ -1,0 +1,237 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+img {
+    display: block;
+    max-width: 100%;
+    height:auto;
+}
+
+.nowrap{
+    white-space:nowrap;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+body {
+    min-height: 100vh;
+    background-color: whitesmoke;
+    font-family:sans-serif;
+    font-size: 1.5rem;
+    background-image:radial-gradient(white, gray);
+    display:flex;
+    flex-direction:column;
+}
+
+
+header,footer {
+    background-color: darkblue;
+    position:sticky;
+    color: white;
+    display:grid;
+    grid-template-columns: 100%;
+
+    text-align: center;
+}
+header{
+    top:0;
+}
+.menu {
+    background-color:white;
+}
+
+.menu ul{
+    display: flex;
+    place-content: center;
+    padding: .5rem;
+    justify-content: space-evenly;
+}
+
+/* a, a:visted == any-link */
+.menu ul li :is(a:any-link) { /* .menu ul li :is(a, a:visited)  ==  .menu ul li a, .menu ul li a:visited*/
+    color:black;  /* is() is going to adopt the highest specifity element inside its parenthesis */
+    font-weight: 600; /* where() = is() but where has 0 specifity */
+}                       /*target: whoever is selected gets it  */
+                        /* img[attributes], select any img tag with this specific attributes */
+                        /* img:not([attribute]) select any img tag without the specific attribute*/
+
+
+.menu ul li :is( a:hover, a:focus) {
+    background-color:black;
+    color:whitesmoke;
+}
+
+main {
+    flex-grow:1;
+    
+    
+}
+
+main ul {
+    display:flex;
+    flex-direction:column;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1rem;
+}
+
+.profilePic {
+    scroll-margin-top: 8rem;
+    width: min(100%, 350px);
+    min-height:350px;
+    border: 5px solid black;
+    background-color: #cbd5e1;
+    border-radius: 20%;
+    padding:1rem;
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+
+    
+}
+
+
+.profilePic figure{ 
+
+    
+    display: flex;
+    flex-flow: column wrap;
+    width:100%;
+   
+    align-items: center;
+    
+    
+    
+}
+/* .profilePic:nth-child(2) {  select the seond profile card
+     background-color: blue; 
+} */
+
+.profilePic figure figcaption {
+    font-weight: bolder;
+    text-align: center;
+    font-size: 2rem;
+    margin:1rem;
+}
+
+.profilePic figcaption::after { /* display after the element */
+    content: " hello";
+    display:block;
+}
+.profilePic q{
+    position:relative;
+}
+.profilePic q::before { /* display before the element */
+    content: open-quote;
+    font-size:3em;
+    position:absolute;
+    top:-0.25em;
+    left:-0.5em;
+}
+
+.profilePic q::after {
+    content: close-quote;
+    font-size:3em;
+    position:absolute;
+    top: -0.25em;
+    right:-0.5em;
+}
+
+.profilePic figure img {
+    border-radius:100%;
+    border: 5px double black;
+}
+
+@media screen and (min-width:576px) {
+
+    main ul{
+        flex-flow: row wrap;
+        justify-content: center;
+        padding:1rem;
+    }
+
+    .profilePic {
+        width: min(100%, 400px);
+
+    }
+
+    .profilePic:last-child {
+        order: -1;
+    }
+}
+
+@media screen and (min-width: 760px) {
+    nav {
+        display:none;
+
+
+    }
+    .profilePic {
+        width: min(100%, 325px);
+
+        
+    }
+    .profilePic figure {
+        flex-flow: column-reverse;
+
+        
+    }
+    .profilePic figcaption {
+        margin: .1em 0;
+    
+    }
+    .profilePic q {
+        margin-top:1rem;
+    }
+
+}
+
+@media screen and (min-width: 992px) {
+    .profilePic {
+        width:min(100%, 400px);
+
+    }
+
+    .profilePic:nth-child(2) {
+        order:-1;
+    }
+
+
+}
+
+@media screen and (min-width:1200px) {
+    .profilePic {
+        width: min(calc(33%-1rem), 500px);
+
+    }
+
+
+}
+
+@media screen and (max-height: 425px) and (min-aspect-ratio: 7/4) {
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    nav {
+        display:none;
+    }
+
+    main ul{
+        flex-flow :row nowrap;
+        justify-content: space-evenly;
+        align-items: stretch;
+    }
+
+    .profilePic {
+        width:min(calc(33%-.25rem), 200px);
+
+    }
+    .profilePic figcaption, .profilePic q{
+        font-size:1.25rem;
+    }
+}

@@ -1,0 +1,118 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 1.5rem;
+    font-family: sans-serif;
+}
+
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-flow: column nowrap;
+}
+
+main {
+    flex-grow:1;
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
+    justify-content: center;
+    gap:1rem;
+}
+
+div {
+    width: 200px;
+    height: 200px;
+    border: 1px solid black;
+    display: grid;
+    place-content: center;
+}
+
+div:first-child {
+    background-color: dodgerblue;
+    /*transform: translateX(50%);  move 50% size of div to the right*/
+    /*transform: rotateX(225deg);  rotate around x-axis*/
+    /*transform: scaleX(120%);  expand the block in x axis */
+
+    /*transform: skewX(-10deg);  left and right border lean 10 degee*/
+ 
+}
+
+div:nth-child(2){
+    background-color: yellow;
+
+    /* transform: translateY(2rem);  move 2rem down of div  */
+    /* translate(x, y)  is the shorthand notation*/
+    /* transform: scaleY(120%);  expand the block in y axis */
+    /*transform: rotateY(180deg)  rotate around y axis */
+    /*transform: skewY(-10deg);  top and bottom border lean 10 degee*/
+
+
+}
+
+div:nth-child(3){
+    background-color: limegreen;
+}
+
+div:hover {
+    background-color: midnightblue;
+    transition-property: background-color, transform; /* the name of the property the transition effect is for*/
+    transition-duration: 2s, 2s; /* transition duration */
+    transition-delay: .5s; /* delay the transition */
+
+    transition-timing-function: ease; /* ease:default  start slow then accelerate then slow down again */
+                                        /* linear: make the transition evenly */
+
+    /* shorthand notation */
+    /* trasntion: all 2s, .5s */
+}
+
+
+
+div:last-child:hover{
+    transform:rotate(180deg);
+}
+
+/* animation */
+.animate {
+    animation-name:slide;
+    animation-duration: 5s;
+    animation-timing-function: ease;
+    animation-delay: 1s;
+    animation-iteration-count: 2;
+
+    animation-fill-mode: forwards; /* forward: stay in the ending state
+                                        backgward: stay in the original state */
+    animation-direction: normal; /*alternate: forward and reverse */
+                                    /* normal: forward
+                                        reverse: backward */
+    /* shorthand notaion */
+    animation: 5s ease-in-out 1s 2 normal forward slide;
+}
+
+
+
+
+@keyframes slide {
+    0%{
+        transform: translateX(0);
+    }
+
+    33% {
+        transform: translateX(300px) rotate(180deg)
+    }
+    66% {
+        transform: translateX(-300px) rotate(-180deg)
+    }
+
+    100% {
+        transform:translateX(0);
+        background-color: rebeccapurple;
+    }
+
+}

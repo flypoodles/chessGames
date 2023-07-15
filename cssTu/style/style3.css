@@ -1,0 +1,35 @@
+/* dont use absolute font size like saying 32px 
+    because it will take the choice away from the user, but some are okay*/
+/* rem: the default font size. 2 rem = 2* default font size*/
+/* em: relative to the font size of the current element */
+/* ch: chracter size;*/
+/* vw: 1 percent of view width */
+* {
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body {
+    min-height:100vh;
+}
+main {
+    width:50vw;
+    background-color: blue;
+    font-size:2rem;
+}
+p {
+    font-size: 1rem;
+}
+
+header{
+    border: 2px solid black;
+    width:50%;
+}
+/*percent: % of parent*/
+h1 {
+    border: 2px dashed red;
+    width:50%;
+    font-size:3rem;
+    padding: 0.5em;
+}

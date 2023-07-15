@@ -1,0 +1,165 @@
+* {
+    padding:0;
+    margin:0;
+    box-sizing: border-box;
+}
+
+
+/* variable */
+:root { /*  every inherent from this even html tag */
+    /* color */
+    --BGCOLOR: #475569;
+    --altBGCOLOR: #1E2938;
+    /* font */
+
+    --FF: sans-serif;
+    --FS: clamp(1rem, 3vh, 3.25rem);
+    --FS-XL: 3rem;
+
+    /* general */
+    --padding: 0.5em;
+    --shadow: 0 6px 5px -5px var(--BGCOLOR);
+    /* square */
+    --squareBGCOLOR: papayawhip;
+    --squareSize: max(150px,20vw);
+
+
+}
+
+
+
+body {
+    font-family:var(--FF);
+    font-size: var(--FS);
+    min-height:100vh;
+    background-color: var(--BGCOLOR);
+    background-image: radial-gradient(whitesmoke, var(--BGCOLOR));
+
+    display:flex;
+    flex-direction:column;
+}
+
+
+header, nav, footer {
+    display:grid;
+    place-content: center;
+    grid-template-columns: 100%;
+    text-align: center;
+}
+
+header,footer {
+    position: sticky;
+    background-color: var(--altBGCOLOR);
+    color:whitesmoke;
+}
+
+header {
+    top: 0;
+
+}
+nav {
+    background-color: white;
+    color:black;
+
+    border-bottom: 2px solid black;
+    box-shadow: var(--shadow);
+}
+main {
+    /* flex-grow: 1;
+    padding: var(--padding);
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    flex-flow: row wrap;
+    gap: min(4vw, 15px); */
+
+    flex-grow:1;
+    display: grid;
+    padding:var(--padding);
+    grid-template-columns: repeat(4, minmax(100px, 300px));
+    
+    gap: min(2vw, 20px);
+}
+
+main section {
+    flex-grow: 1;
+    padding: var(--padding);
+}
+
+main aside {
+    background-color: hsla(0,0%,20%,0.8);
+    color: whitesmoke;
+    font-size: var(--FS);
+    font-style: italic;
+    padding: var(--padding);
+    
+    
+}
+
+.content {
+    margin-top: 20px;
+}
+
+.tooltip {
+    border-bottom: 1px dashed orange;
+    position:relative;
+}
+
+.tooltip:hover::before {
+    content: attr(data-tooltip); /* retrive the content of the element */
+    position:absolute;
+    top: -25px;
+    background-color: #1E2938;
+    border-radius:15px;
+    white-space:nowrap;
+    padding: var(--padding);
+}
+
+footer {
+    bottom:0;
+}
+a:any-link {
+    color:firebrick;
+}
+
+a:hover, a:focus {
+    filter: brightness(150%); /* filter the element */
+
+}
+
+
+/* features */
+.square--highlight {
+    --squareBGCOLOR: cornflowerblue; /* chhange the variable value but only for this */
+} 
+.square {
+    background-color: var(--squareBGCOLOR);
+    /* width:var(--squareSize);
+    height:var(--squareSize); */
+    border-radius: 15px;
+    display: grid;
+    place-content: center;
+    font-size: var(--FS-XL);
+    box-shadow: var(--shadow);
+    
+}
+
+/* @media screen and (min-width: 576px) {
+    main {
+        flex-flow: row nowrap;
+        justify-content: space-between;
+        align-items: flex-start;
+        padding-top:0;
+
+    }
+
+    
+
+    main section {
+        width: calc(70% - 5px);
+    }
+
+    main aside {
+        width: calc(30% - 5px);
+    }
+} */

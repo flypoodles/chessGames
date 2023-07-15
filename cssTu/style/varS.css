@@ -1,0 +1,110 @@
+* {
+    padding:0;
+    margin:0;
+    box-sizing: border-box;
+}
+
+
+/* variable */
+:root { /*  every inherent from this even html tag */
+    /* color */
+    --BGCOLOR: #475569;
+    --altBGCOLOR: #1E2938;
+    /* font */
+
+    --FF: sans-serif;
+    --FS: 1.5rem;
+    --FS-XL: 3rem;
+
+    /* general */
+    --padding: 0.25rem;
+    --shadow: 0 6px 5px -5px var(--BGCOLOR);
+    /* square */
+    --squareBGCOLOR: papayawhip;
+    --squareSize: max(150px,20vw);
+
+
+}
+
+@media (prefers-color-scheme: dark) { /* dark mode */
+    :root {
+        /* color */
+        --BGCOLOR: #black;
+        --altBGCOLOR: #333;
+        /* font */
+
+        /* square */
+        --squareBGCOLOR: rgb(202,174,202);
+
+        
+    }
+}
+
+body {
+    font-family:var(--FF);
+    font-size: var(--FS);
+    min-height:100vh;
+    background-color: var(--BGCOLOR);
+    background-image: radial-gradient(whitesmoke, var(--BGCOLOR));
+
+    display:flex;
+    flex-direction:column;
+}
+
+
+header, nav, footer {
+    display:grid;
+    place-content: center;
+    grid-template-columns: 100%;
+    text-align: center;
+}
+
+header,footer {
+    position: sticky;
+    background-color: var(--altBGCOLOR);
+    color:whitesmoke;
+}
+
+header {
+    top: 0;
+
+}
+nav {
+    background-color: white;
+    color:black;
+    padding:var(--padding);
+    border-bottom: 2px solid black;
+    box-shadow: var(--shadow);
+}
+main {
+    flex-grow: 1;
+    padding: 10px 0;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    flex-flow: row wrap;
+    gap: min(4vw, 15px);
+}
+footer {
+    bottom:0;
+}
+section {
+    background-color: inherit;
+}
+
+
+/* features */
+.square--highlight {
+    --squareBGCOLOR: cornflowerblue; /* chhange the variable value but only for this */
+} 
+.square {
+    background-color: var(--squareBGCOLOR);
+    width:var(--squareSize);
+    height:var(--squareSize);
+    border-radius: 15px;
+    display: grid;
+    place-content: center;
+    font-size: var(--FS-XL);
+    box-shadow: var(--shadow);
+    
+}

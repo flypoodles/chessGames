@@ -1,0 +1,51 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    font-family:sans-serif;
+    min-height:100vh;
+    padding:20px;
+}
+
+.container {
+    max-width:400px;
+    min-height:400px;
+    margin-inline:auto;
+    border:1px solid black;
+    display:flex;
+    justify-content: center; /* align the flex container item horizontally */
+    align-items: center; /* align the flex container item vertically */
+    gap:1rem; /* add gap between each flex box */
+    flex-direction: row; /* change the flex direction to row will make 
+                            justify content now change container item vertically. 
+                            align item change horizontally. */
+    flex-wrap: nowrap;
+    
+    /* flex-flow: direction wrap : short hand notation */
+
+    align-content: flex-center; /* align  rows */
+}
+
+.box {
+    /* min-width:100px; */
+    min-height:100px;
+    background-color: black;
+    color:white;
+    font-size:2rem;
+    padding:.5rem;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    flex-basis:250px; /* each flex box has default 100px */
+    flex-shrink:1; /* flex grow: grow the flex box after whatever space left after basis. grow to fill out the container */
+                    /* flex shrink: shrink the flex box below the basis */
+                    /* flex: growth shrink basis shorthand notatiion */
+
+}
+
+.box:nth-child(2) {
+    flex-shrink:2;
+    order: 4; /* every flexbox default order is 0, so higher order goes after lower order */
+}

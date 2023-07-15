@@ -1,0 +1,37 @@
+body {
+    font-size:2rem;
+    font-family: sans-serif;
+}
+
+.columns {
+    column-count: 4; /* split the content of an element into 4 columns */
+    column-width: 250px; /* column must be at least this width */
+    columns: 4 250px; /* short hand notation */
+    column-rule: 3px solid black; /* column border */
+    column-gap: 2em; /* gap between columns */
+}
+
+.columns p {
+    margin-top: 0;
+}
+
+.columns h2{
+    margin-top:0;
+    background-color: black;
+    color: white;
+    padding: 1rem;
+    break-inside : avoid;  /* whether to page break, column break, or region break 
+                            does not split a element into 2*/   
+    
+}
+
+ .columns .quotes{
+    margin-top:20px;
+    font-size: 3rem;
+    text-align: center;
+    color:pink;
+    column-span:all; /* how many columns to span on */
+}
+.author {
+    white-space: nowrap; /* Text will never wrap to the next line */
+}

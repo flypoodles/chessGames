@@ -1,0 +1,54 @@
+body {
+    font-size:2rem;
+    font-family: sans-serif;
+}
+
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing:border-box;
+
+}
+main {
+    background-color: aqua;
+    width: 100%;
+}
+p {
+    background-color: lightgray;
+    margin:100px 50px;
+
+}
+/*inline-block: allow inline to able to apply block elements while stay in inline*/
+/* block: stack on top of each other 100 % width of whatever they given.*/
+/* inline only have width of their content */
+.opposite {
+    background-color: black;
+    color:white;
+    display:inline-block;
+    margin-top:100px;
+    height:200px;
+}
+
+
+ul {
+    list-style-type: none;
+    padding:10px;
+    text-align:right;
+    background-color: black;
+    margin:0;
+}
+
+li {
+    display: inline-block;
+    margin-inline: 0.5rem; /* apply margin left and right */;
+}
+
+li a {
+    color:white;
+    text-decoration:none;
+}
+
+li a:hover, li a:focus{
+    text-decoration:underline;
+}

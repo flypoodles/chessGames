@@ -1,0 +1,37 @@
+
+body {
+    padding: 5% 10%;
+    font-size: 2rem;
+    font-family:sans-serif;
+}
+
+
+ol {
+    list-style-type: lower-roman; /*change the marking from 1. 2. 3. to a. b. c.*/
+
+}
+
+ul {
+    list-style-type: square;
+    text-align: center;
+    list-style-position:inside;  /*make bullet points as part of the texts*/
+    color:blue; /*change bullets points and text to blue  */
+    /* list-style-image: url(../../tutorial/ven.png);  make bullets point to be image instead */
+    /* shorthand notation  List-style: square url() inside */
+    /* square is the fallback, it will show url first, inside make bullet point as part of the text */
+
+}
+
+/* only apply to li within ul */
+ul li:nth-child(1){
+    color: red;
+
+}
+
+/* pseudo elements */
+ul ::marker {
+    color: pink;
+    font-family:fantasy;
+    font-size: 1.5em;
+    content: "only $5>>"
+}

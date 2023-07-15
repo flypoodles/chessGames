@@ -1,0 +1,24 @@
+body {
+    padding:10%;
+    font-size: 2rem;
+    color: red;
+}
+
+/* input, button {
+    font: inherit;  inherit from parent
+    color: inherit;
+} */
+
+p {
+    text-decoration: line-through;  /*put a line through each text*/
+    text-transform:capitalize; /*change each letter*/
+    text-align:justify; /* stretch the lines so that each line has equal width*/ 
+    text-indent: 2em;
+    line-height: 1.5; /*height of each line*/
+    letter-spacing: .1em;
+    word-spacing: 0.1em;
+    font-weight: lighter; /*how bold the font is */
+    /* font-style:italic; */
+    font-family:'Times New Roman', Times, serif; /*it use first choice if not find, use second choice and so on*/
+    
+}

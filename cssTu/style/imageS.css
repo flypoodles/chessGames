@@ -1,0 +1,112 @@
+/* Begin reset */
+*{
+    margin:0;
+    padding:0;
+    box-sizing: border-box;
+}
+
+img {
+    display:block;
+}
+
+/*  end Reset */
+
+
+/*  utility classes */
+
+.nowrap {
+    white-space: nowrap;
+}
+
+.offscreen {
+    position : absolute;
+    left: -100000px;
+}
+/* end utility classes */
+body {
+    font-family:sans-serif;
+    min-height:100vh;
+    background-color:aliceblue;
+    background-image: url(../pics/bubbles.png),linear-gradient(to left, steelblue, white);
+    background-repeat:repeat-y, repeat-x; /* 1st img, then 2nd img */
+    background-position: right, center;
+
+    background-size: 20%, auto;
+}
+
+.container {
+    background-color: peachpuff;
+    background-image: url('../pics/map-2176x1451.png'); /* always us image twice as big */
+    background-repeat: repeat; /*   no-repeat : will not repeat the image to fill up the container */
+                                /*  repeat-y/x : repeat on y/x axis */
+    background-size:cover; /* cover: resize the image to cover the entire container even if it has to stretch or cut */
+                            /*  contain: resize the background image to make sure the image is fully visible*/
+    
+    background-position: center center; /* see the part of the image */
+}
+    
+
+.hero {
+    border-bottom: 2px solid black;
+    padding:20px;
+    display:flex;
+    justify-content:flex-start;
+    align-items:center;
+    gap: 30px;
+
+
+    
+     background-color: hsla(0, 0%, 0%, 0.466);
+    
+
+}
+
+.h1 {
+    font-size:500%;
+    color:aliceblue;
+    text-shadow: 10px 2px 5px black; /* add shadow to texts, x-axis y-axis blurValue color */
+    /* background-color: hsla(0, 0%, 0%, 0.404);
+    padding:0.25rem;
+    border-radius:10px; */
+
+}
+.profile-pic-figure{
+    width: 35%;
+}
+
+.profile-pic-figure img {
+    width: 100%;
+    height: auto;
+    min-width: 100px;
+    border: 5px double gray;
+    border-radius:50%;
+}
+
+.example {
+    margin-top: 1rem;
+    padding-left:20px;
+    border:1px solid red;
+}
+
+
+.example img {
+    width: 25%;
+    height:auto;
+}
+
+.clip {
+    font-weight: 800;
+    font-size: 18rem;
+    text-align: center;
+    background-image: url(../pics/scenic-2200x1331.png);
+    background-size:100%;
+    text-transform: uppercase;
+
+
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:hsla(0, 0%, 0%, 0.192); /* allow image to appear inside the text */
+}
+
+/* background short hand notation */
+/*  background: repeat postion(center) url(""), second image property */

@@ -1,0 +1,32 @@
+body {
+    padding: 10%;
+    font-size: 2rem;
+    font-family: sans-serif;
+}
+
+a {
+    text-decoration: none;
+    color: pink;
+    cursor: pointer;
+    background-color: aquamarine;
+}
+
+/*pseudo class : represent the current state of the element
+ ex: a : visited, a: hover
+pseudo class is more specific */
+/*The order should be : link->visited->focus->hover->active
+To get a color similar to a particular color- use HSL*/
+
+
+a:visited {
+    color:purple;
+    background-color:red;
+}
+a:hover {
+
+    opacity: .5;
+}
+a:active {
+    color:red;
+    background-color:green;
+}

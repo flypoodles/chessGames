@@ -1,0 +1,387 @@
+
+
+/* reset */
+
+*, *::after, *::before {
+    margin:0;
+    padding:0;
+    box-sizing: border-box;
+}
+
+img {
+    display:block;
+    width: 100%;
+    height: auto;
+}
+
+input, button, textarea {
+    font: inherit;
+    font-weight: bold;
+
+}
+
+
+/* variable */
+
+:root {
+    /* fonts */
+    --FF: sans-serif;
+    --FF-Headings: cursive;
+    --FS:clamp(1rem, 2.2vh, 1.5rem);
+
+    /* colors */
+    --BGcolor: orange;
+    --BGcolorFade: rgb(252,220,160);
+    --BGImage: linear-gradient(to bottom, var(--BGcolor), var(--BGcolorFade));
+    --BodyBGColor: #FFF;
+    --fontColor:black;
+    --borderColor: #333;
+    --highlightColor: rgb(51,178,51);
+    --linkColor:black;
+    --linkHover:hsla(0, 0%, 0%, 0.6);
+    --linkActive: orange;
+    --HeaderBGColor:black;
+    --HeaderColor:white;
+    --NavBGColor:white;
+    --heroBGColor: rgba(51,178,51,0.75);
+    --heroColor: white;
+    --buttonColor:white;
+    /* border */
+    --borders: 1px solid var(--borderColor);
+    --borderRadius: 15px;
+
+    /* padding */
+    --paddingTB: 0.25em;
+    --paddingSide: 2.5%;
+
+    /* margin */
+    --margin: clamp(1em, 2.5vh, 1.5em) 0;
+
+
+
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --BGcolor: black;
+        --BGcolorFade :gray;
+        --HeaderColor: whitesmoke;
+        --NavBGColor: rgb(20,20,20);
+        --heroColor:#333;
+        --BodyBGColor:#333;
+        --HeaderBGColor:black;
+        --borderColor:whitesmoke;
+        --linkColor:whitesmoke;
+        --linkActive: rgb(251, 200, 103);
+        --linkHover: orange;
+        --buttonColor:black;
+        --fontColor:white;
+    }
+} 
+
+/* utility classes */
+
+.offscreen {
+    position: absolute;
+    left: -100000px;
+
+}
+
+.nowrap {
+    white-space: nowrap;
+}
+
+.center {
+    text-align: center;
+
+}
+
+
+
+/*  General Styles */
+
+html {
+    scroll-behavior: smooth;
+    font-size: var(--FS);
+    font-family:var(--FF);
+    background-color: var(--BGcolor);
+    background-image: var(--BGImage);
+
+}
+
+body {
+    font-family:var(--FF);
+    background-color: var(--BodyBGColor);
+    color: var(--fontColor);
+    min-height:100vh;
+    max-width:800px;
+    margin: 0 auto;
+    border-left: var(--borders);
+    border-right: var(--borders);
+    box-shadow: 0 0 10px var(--borderColor);
+    display:flex;
+    flex-direction: column;
+}
+
+h1, h2, h3 {
+    font-family: var(--FF-Headings);
+    letter-spacing: .1em;
+
+}
+
+h2, h3 {
+    margin-bottom:1em;
+    color:var(--highlightColor);
+}
+
+p {
+    line-height: 1.5em;
+}
+
+a:any-link {
+    color: var(--linkColor);
+
+}
+
+a:hover, a:focus-visible {
+     color: var(--linkHover);
+}
+
+a:active{
+    color: var(--linkActive);
+}
+
+/* Header */
+
+.header {
+    position:sticky;
+    top:0;
+    z-index: 1;
+
+}
+
+.headerH1{ 
+    text-align:center;
+    background-color: var(--HeaderBGColor);
+    color:var(--HeaderColor);
+
+    padding: var(--paddingTB) var(--paddingSide);
+
+
+}
+
+.headerNav {
+    background-color: var(--NavBGColor);
+
+    border-bottom: var(--borders);
+    font-weight:bold;
+    box-shadow: 0 6px 5px -5px var(--borderColor);
+
+
+}
+
+.headerUl {
+    padding: var(--paddingTB) var(--paddingSide);
+    list-style-type: none;
+    display: flex;
+    justify-content: space-evenly;
+    gap:1rem;
+
+}
+
+/* hero */
+
+.hero {
+    position:relative;
+
+}
+
+.heroH2 {
+    background-color: var(--heroBGColor);
+    color:  var(--heroColor);
+    padding: 0.25em 0.5em;
+    letter-spacing: 0.1rem;
+    text-shadow: 2px 2px 5px var(--borderColor);
+    position:absolute;
+    top:-100px;
+    left:20px;
+    animation: showWelcome 0.5s ease 1s forwards;
+
+}
+
+@keyframes showWelcome{
+    0% {
+        top:-20px;
+        transform:skew(0deg,-5deg);
+
+    }
+
+    80% {
+        top:30px;
+        transform: skew(10deg, -5deg);
+
+    }
+
+    100% {
+        top:20px;
+
+        transform: skew(-10deg, -5deg);
+        
+    }
+}
+
+/* Footer */
+
+.footer {
+    position:sticky;
+    bottom:0;
+    background-color: var(--HeaderBGColor);
+    color: var(--HeaderColor);
+    padding: var(--paddingTB) var(--paddingSide);
+    text-align: center;
+
+}
+.footer a {
+    color: var(--HeaderColor);
+}
+
+/* main */
+.main {
+    flex-grow:1;
+    padding: var(--paddingTB) var(--paddingSide);
+
+    
+}
+
+.mainSection {
+    scroll-margin-top: 6.5rem;
+    margin:var(--margin);
+}
+
+.mainSection:first-child{
+    margin-top: 1em;
+}
+
+.mainSection:last-child {
+    min-height: calc(100vh-20rem);
+}
+
+/* about */
+.aboutTrivia {
+    margin: var(--margin);
+    margin-top: 1em;
+}
+
+/* contact */
+
+.contactH2 {
+    margin:0;
+}
+
+.contactFieldset {
+    border:none;
+
+}
+
+.contactP {
+    margin: 1em 0;
+}
+.contactLabel {
+    display: block;
+    font-weight:bold;
+}
+.contactInput, .contactTextarea {
+    padding: 0.5em;
+    border-radius:var(--borderRadius);
+    border-width: 2px;
+    width:100%;
+
+}
+
+.contactButton {
+    padding: 0.5em;
+    border-radius:var(--borderRadius);
+    background-color: var(--highlightColor);
+    color: var(--buttonColor);
+}
+
+/* menu */
+
+thead, tbody, tfoot, tr {
+    display:contents; /* make its child's parent to be the element iteself parent */
+}
+
+.menuContainer {
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+
+    grid-template-areas: "hd1 hd2 hd3"
+                            "cr cr1 crip"
+                            "cr cr2 cr2p"
+                            "cr cr3 cr3p"
+                            "sf sf1 sf1p"
+                            "sf sf2 sf2p"
+                            "sf sf3 sf3p"
+                            "cs cs cs";
+    gap: 0.1em;
+    margin-bottom: 1em;
+}
+
+.menuCr {
+    grid-area: cr;
+}
+
+.menuSf {
+    grid-area: sf;
+}
+
+.menuCs {
+    grid-area: cs;
+    color: var(--highlightColor);
+    font-weight:bold;
+}
+
+.menuCr, .menuSf, .menuCs, .menuHeader {
+    color: var(--highlightColor);
+    font-weight:bold;
+    height:100%;
+    display:grid;
+    place-content: center;
+
+}
+
+
+.menuHeader, .menuItem {
+    width: 100%;
+    padding: 1em;
+    border: medium ridge var(--borderColor);
+}
+.menuItem {
+    display:grid;
+    place-content: center;
+}
+thead th:first-child {
+    border-top-left-radius: var(--borderRadius);   
+}
+
+thead th:last-child {
+    border-top-right-radius: var(--borderRadius);   
+}
+
+tfoot td {
+    border-bottom-left-radius: var(--borderRadius);
+    border-bottom-right-radius:var(--borderRadius);
+}
+
+@media screen and (min-width: 576px) {
+    .headerH1::before{
+        content: '🌮 '
+    }
+    .headerH1::after{
+        content: ' 🌮'
+    }
+
+    .menuHeader, .menuCr, .menuSf,.menuCs{
+        font-size: 125%;
+    }
+}
