@@ -67,6 +67,10 @@ class Dot {
     getFaction() {
         return this.#faction;
     }
+
+    getPosition() {
+        return [this.#col, this.#row];
+    }
 }
 
 
@@ -146,7 +150,9 @@ async function turn(curTur) {
         if (!validMove(initialDot, finalDot)) {
             curTur--;
         }
-        movePiece(initialDot, finalDot);
+        else {
+            movePiece(initialDot, finalDot); 
+        }
         curTur++;
     }
     
@@ -164,10 +170,43 @@ function movePiece(initialDot, finalDot) {
 
  
 function validMove(initialDot, finalDot) {
-    intFaction = initialDot.getFaction();
-    intPiece = initialDot.getPieceName();
+    let intFaction = initialDot.getFaction();
+    let intPiece = initialDot.getPieceName();
+    let finFaction = finalDot.getFaction();
+    let finPiece = finalDot.getPieceName();
 
+    let intPos = initialDot.getPosition();
+    let finPos = finalDot.getPosition();
 
+    let intID = positionCalc(intPos[0],intPos[1]);
+    let finID = positionCalc(finPos[0],finPos[1]);
+    if (intFaction === finFaction && intID != finID) {
+        alert("Cannot kill your allies.");
+        return false;
+    }
+
+    if (intID === finID) {
+        alert("Same Place");
+        return false;
+    }
+
+    /* todo... */
+    switch(intPiece) {
+        case Cannon:
+            return true;
+        case Rook:
+            return true;
+        case Elephant:
+            return true;
+        case Pawn:
+            return true;
+        case Horse:
+            return true;
+        case King:
+            return true;
+        case Guard:
+            return true;
+    }
     return true;
 }
 
@@ -207,3 +246,24 @@ function loadBoard(boardString = defaultBoard) {
     return true;
 }
 
+function validCannon() {
+    return true;
+}
+function validElephant() {
+    return true;
+}
+function validGuard() {
+    return true;
+}
+function validHorse() {
+    return true;
+}
+function validKing() {
+    return true;
+}
+function validPawn() {
+    return true;
+}
+function validRook() {
+    return true;
+}
