@@ -5,6 +5,7 @@ roadMap :
 3. Allow pieces to move and follow the rules.
 4. implement turn based  game
 5. win condition
+6. add reset button, curTurn, timer, etc.
  */
 
 const boardRow = 10;
@@ -59,6 +60,13 @@ class Dot {
         this.#pieceName = "none";
         this.#htmlEle.firstChild.setAttribute("src", "chessPiece/blank.png");
     }
+    getPieceName() {
+        return this.#pieceName;
+    }
+
+    getFaction() {
+        return this.#faction;
+    }
 }
 
 
@@ -102,8 +110,65 @@ function generatePos() {
         }
         curWidth= baseWidth;
         curHeight= (parseInt(curHeight.replace("px",""))+57+i)+"px";
-    }   
+    }
     loadBoard();
+    generateButton.removeEventListener("click",generatePos);
+    
+    turn(0);
+}
+
+
+
+
+function pickPosition() {
+    return new Promise((resolve, reject) => {
+        
+        let listener = (e) => {
+            let pickPiece = board[e.target.parentElement.id];
+            
+            chessPlate.removeEventListener("click", listener);
+            resolve(pickPiece);
+        }
+        chessPlate.addEventListener("click", listener);
+    })
+}
+
+
+/* takes in a based turn.  */
+async function turn(curTur) {
+    while(true) {
+        let initialDot = await pickPosition();
+        alert(initialDot.getPieceName());
+        
+        let finalDot = await pickPosition();
+        alert(finalDot.getPieceName());
+
+        if (!validMove(initialDot, finalDot)) {
+            curTur--;
+        }
+        movePiece(initialDot, finalDot);
+        curTur++;
+    }
+    
+
+
+};
+
+
+function movePiece(initialDot, finalDot) {
+    intFaction = initialDot.getFaction();
+    intPiece = initialDot.getPieceName();
+    finalDot.addPiece(intFaction,intPiece);
+    initialDot.removePiece();
+}
+
+ 
+function validMove(initialDot, finalDot) {
+    intFaction = initialDot.getFaction();
+    intPiece = initialDot.getPieceName();
+
+
+    return true;
 }
 
 function loadBoard(boardString = defaultBoard) {
@@ -141,3 +206,4 @@ function loadBoard(boardString = defaultBoard) {
     }
     return true;
 }
+
