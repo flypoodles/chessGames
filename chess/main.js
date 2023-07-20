@@ -2,7 +2,7 @@
 roadMap :
 1. finish Html and CSS.  Checked
 2. finish add pieces to the board. Checked
-3. Allow pieces to move and follow the rules.
+3. Allow pieces to move and follow the rules. Check
 4. implement turn based  game
 5. win condition
 6. add reset button, curTurn, timer, etc.
@@ -31,6 +31,7 @@ class Dot {
     #pieceName;
     #id;
     #faction;
+    #palace = false;
 
     constructor(thisCol, thisRow, thisHtml, thisID, thisPiece = "none",thisFac="none") {
         this.#col = thisCol;
@@ -71,6 +72,17 @@ class Dot {
     getPosition() {
         return [this.#col, this.#row];
     }
+    getID () {
+        return this.#id;
+    }
+
+    isPalace() {
+        return this.#palace;
+    }
+
+    setPalace() {
+        this.#palace = true;
+    }
 }
 
 
@@ -88,6 +100,11 @@ function positionCalc (row, col) {
 }
 function isCharNumber(c) {
     return c >= '0' && c <= '9';
+}
+
+function getArea(intCol, intRow, finCol, finRow) {
+
+    return Math.abs((finCol - intCol) * (finRow - intRow));
 }
 
 
@@ -116,11 +133,29 @@ function generatePos() {
         curHeight= (parseInt(curHeight.replace("px",""))+57+i)+"px";
     }
     loadBoard();
+    formPalace();
     generateButton.removeEventListener("click",generatePos);
-    
+
     turn(0);
 }
 
+function formPalace () {
+    for (let i = 0; i < 3; i++) {
+        for (let j = 3; j < 6; j++) {
+            board[positionCalc(i,j)].setPalace();
+            board[positionCalc(i+7,j)].setPalace();
+        }
+    }
+
+    /* for(let i =0; board.length; i++) {
+        
+        if (board[i].isPalace()) {
+            let curDiv = document.getElementById(i);
+            curDiv.style.border = "1em solid black";
+        }
+    } */
+    
+}
 
 
 
@@ -142,11 +177,17 @@ function pickPosition() {
 async function turn(curTur) {
     while(true) {
         let initialDot = await pickPosition();
+        if (initialDot === undefined || initialDot.getPieceName() ==="none") {
+            continue;
+        }
         alert(initialDot.getPieceName());
-        
-        let finalDot = await pickPosition();
-        alert(finalDot.getPieceName());
 
+        let finalDot = await pickPosition();
+        if (finalDot === undefined) {
+            continue;
+        }
+        alert(finalDot.getPieceName());
+        
         if (!validMove(initialDot, finalDot)) {
             curTur--;
         }
@@ -192,20 +233,20 @@ function validMove(initialDot, finalDot) {
 
     /* todo... */
     switch(intPiece) {
-        case Cannon:
-            return true;
-        case Rook:
-            return true;
-        case Elephant:
-            return true;
-        case Pawn:
-            return true;
-        case Horse:
-            return true;
-        case King:
-            return true;
-        case Guard:
-            return true;
+        case "Cannon":
+            return validCannon(initialDot,finalDot);
+        case "Rook":
+            return  validRook(initialDot, finalDot);
+        case "Elephant":
+            return validElephant(initialDot, finalDot);
+        case "Pawn":
+            return validPawn(initialDot, finalDot);
+        case "Horse":
+            return validHorse(initialDot, finalDot);
+        case "King":
+            return validKing(initialDot, finalDot);
+        case "Guard":
+            return validGuard(initialDot, finalDot);
     }
     return true;
 }
@@ -246,24 +287,275 @@ function loadBoard(boardString = defaultBoard) {
     return true;
 }
 
-function validCannon() {
+function validCannon(initialDot, finalDot) {
+    let intFaction = initialDot.getFaction();
+    let intPos = initialDot.getPosition();
+    let finPos = finalDot.getPosition();
+    let direction = 0;
+    let blocker = 0;
+    if (getArea(intPos[0], intPos[1], finPos[0],finPos[1]) != 0) {
+        alert("Cannon cannot move diagonally!");
+        return false;
+    }
+    let horiDis = finPos[0] - intPos[0];
+    let verDis = finPos[1] - intPos[1];
+
+    if (horiDis != 0) {
+        direction = horiDis / Math.abs(horiDis);
+        let curCol = intPos[0];
+
+        curCol += direction;
+        while(curCol != finPos[0]) {
+            let index = positionCalc( intPos[1],curCol);
+            if(board[index].getPieceName() != "none") {
+                blocker++;
+            }
+            curCol += direction;
+        }
+
+    } else if (verDis != 0) {
+        direction = verDis/Math.abs(verDis);
+        let curRow = intPos[1];
+        curRow += direction;
+
+        while(curRow != finPos[1]) {
+            let index = positionCalc( curRow,intPos[0]);
+            if (board[index].getPieceName() != "none") {
+                blocker++;
+                alert(board[index].getPieceName());
+            }
+            curRow += direction;
+        }
+    }
+
+    if (blocker === 1 && finalDot.getPieceName() != "none") {
+        return true;
+    }
+
+    if (blocker === 0 && finalDot.getPieceName() === "none") {
+        return true;
+    }
+
+    alert("Invalid Move (Cannon)");
+    return false;
+}
+function validElephant(initialDot, finalDot) {
+    let intFaction = initialDot.getFaction();
+    let intPos = initialDot.getPosition();
+    let finPos = finalDot.getPosition();
+    let theArea = getArea(intPos[0], intPos[1], finPos[0],finPos[1]);
+    
+    let xlen = finPos[0] - intPos[0];
+    let ylen = finPos[1] - intPos[1];
+
+    if (Math.abs(xlen) != Math.abs(ylen) || theArea != 4) {
+        alert("Elephant must move in a square");
+        alert(Math.abs(xlen));
+        alert(Math.abs(ylen));
+        alert(theArea);
+        return false;
+    }
+
+    if(intFaction ==="red" && finPos[1] < 5 ) {
+        alert("Elephant Cannot cross river(red)");
+        return false;
+    }
+    if(intFaction ==="black" && finPos[1] > 4) {
+        alert("Elephant Cannot cross river(black)");
+        return false;
+    }
+
+    let midx = (finPos[0]+intPos[0]) / 2;
+    let midy = (finPos[1] + intPos[1]) / 2;
+
+    let index = positionCalc(midy,midx);
+    if (board[index].getPieceName() != "none") {
+        alert("middle is occupid ");
+        return false;
+    }
     return true;
 }
-function validElephant() {
+function validGuard(initialDot, finalDot) {
+    let intPos = initialDot.getPosition();
+    let finPos = finalDot.getPosition();
+
+    if(!finalDot.isPalace()) {
+        alert("must be within palace")
+        return false;
+    }
+    if (getArea(intPos[0], intPos[1], finPos[0],finPos[1]) != 1) {
+        alert("Guard can only move 1 block diagonally!");
+        return false;
+    }
     return true;
 }
-function validGuard() {
+function validHorse(initialDot, finalDot) {
+    let intFaction = initialDot.getFaction();
+    let intPos = initialDot.getPosition();
+    let finPos = finalDot.getPosition();
+    let theArea = getArea(intPos[0], intPos[1], finPos[0],finPos[1]);
+
+    if (theArea != 2) {
+        alert("Horse Invalid Move Area");
+        return false;
+    }
+
+    let xlen = finPos[0] - intPos[0];
+    let ylen = finPos[1] - intPos[1];
+    if (Math.abs(xlen) === 2) {
+        direction = xlen / Math.abs(xlen);
+        if (board[positionCalc(intPos[1], intPos[0]+direction)].getPieceName() != "none") {
+            alert("blocking horse's leg");
+            return false;
+        }
+    }
+    if (Math.abs(ylen) === 2) {
+        direction = ylen / Math.abs(ylen);
+        if (board[positionCalc(intPos[1] + direction, intPos[0])].getPieceName() != "none") {
+            alert("blocking horse's leg");
+            return false;
+        }
+    }
+
     return true;
 }
-function validHorse() {
+function validKing(initialDot, finalDot) {
+    let intPos = initialDot.getPosition();
+    let finPos = finalDot.getPosition();
+    if(!finalDot.isPalace()) {
+        alert("must be within palace")
+        return false;
+    }
+
+    if(flyingKing (initialDot, finalDot)) {
+        alert("flyingKing");
+        return true;
+    }
+
+    if (getArea(intPos[0], intPos[1], finPos[0],finPos[1]) != 0) {
+        alert("King must not move diagonally!");
+        return false;
+    }
+
+    let horiDis = Math.abs(finPos[0] - intPos[0]);
+    let verDis = Math.abs(finPos[1] - intPos[1]);
+
+    if (horiDis > 1 || verDis  > 1) {
+        alert("King can only move 1 block at a time");
+        return false;
+    }
+
+
     return true;
 }
-function validKing() {
+function validPawn(initialDot, finalDot) {
+    let intFaction = initialDot.getFaction();
+    let intPos = initialDot.getPosition();
+    let finPos = finalDot.getPosition();
+    let theArea = getArea(intPos[0], intPos[1], finPos[0],finPos[1]);
+
+    if (theArea !=0) {
+        alert("Pawn cannot move diagonly");
+        return false;
+    }
+    let xlen = finPos[0] - intPos[0];
+    let ylen = finPos[1] - intPos[1];
+
+    if (intFaction === "red" && ylen > 0) {
+        alert("Pawn cannot move backward");
+        return false;
+    }
+    if (intFaction === "black" && ylen < 0) {
+        alert("Pawn cannot move backward");
+        return false;
+    }
+
+    if (Math.abs(xlen) > 1 || Math.abs(ylen) > 1) {
+        alert("Pawn can only move one step");
+        return false;
+    }
+
+    if(Math.abs(xlen) === 1 && intFaction ==="red" && finPos[1] > 4) {
+        alert("Pawn can only move forward before river");
+        return false;
+    }
+    if(Math.abs(xlen) === 1 && intFaction ==="black" && finPos[1] < 5) {
+        alert("Pawn can only move forward before river");
+        return false;
+    }
     return true;
 }
-function validPawn() {
+function validRook(initialDot, finalDot) {
+    let intPos = initialDot.getPosition();
+    let finPos = finalDot.getPosition();
+    let theArea = getArea(intPos[0], intPos[1], finPos[0],finPos[1]);
+
+    if (theArea !=0) {
+        alert("Rook cannot move diagonly");
+        return false;
+    }
+
+    let horiDis = finPos[0] - intPos[0];
+    let verDis = finPos[1] - intPos[1];
+
+    if (horiDis != 0) {
+        let direction = horiDis / Math.abs(horiDis);
+        let curCol = intPos[0];
+
+        curCol += direction;
+        while(curCol != finPos[0]) {
+            let index = positionCalc( intPos[1],curCol);
+            if(board[index].getPieceName() != "none") {
+                alert ("Invalid Move for Rook");
+                return false;
+            }
+            curCol += direction;
+        }
+
+    } else if (verDis != 0) {
+        let direction = verDis/Math.abs(verDis);
+        let curRow = intPos[1];
+        curRow += direction;
+
+        while(curRow != finPos[1]) {
+            let index = positionCalc( curRow,intPos[0]);
+            if (board[index].getPieceName() != "none") {
+                alert ("Invalid Move for Rook");
+                return false;
+            }
+            curRow += direction;
+        }
+    }
     return true;
 }
-function validRook() {
+
+function flyingKing (initialDot, finalDot) {
+    let curPiece = finalDot.getPieceName();
+    let intPos = initialDot.getPosition();
+    let finPos = finalDot.getPosition();
+    let verDis = finPos[1] - intPos[1];
+
+    if (curPiece != "King") {
+        console.log("destination piece is not King!!");
+        return false;
+    }
+    if (finPos[0] != intPos[0]) {
+        console.log("not straight line(fly king)");
+        return false;
+    }
+
+    let direction = verDis/Math.abs(verDis);
+    let curRow = intPos[1];
+    curRow += direction;
+
+    while(curRow != finPos[1]) {
+        let index = positionCalc( curRow,intPos[0]);
+        if (board[index].getPieceName() != "none") {
+            console.log ("piece block (flyinKing)");
+            return false;
+        }
+        curRow += direction;
+    }
+
     return true;
 }
