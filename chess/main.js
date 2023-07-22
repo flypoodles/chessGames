@@ -3,9 +3,10 @@ roadMap :
 1. finish Html and CSS.  Checked
 2. finish add pieces to the board. Checked
 3. Allow pieces to move and follow the rules. Check
-4. implement turn based  game
+4. implement turn based  game. Check
 5. win condition
 6. add reset button, curTurn, timer, etc.
+7. when piece dead, it move to the side of the board.
  */
 
 const boardRow = 10;
@@ -13,8 +14,11 @@ const boardCol = 9;
 const board = [];
 const chessPlate  = document.getElementById("chessBoard");
 const generateButton = document.getElementById("generateItems");
-const defaultBoard = "RHEGKGEHR/8/1C5C/P1P1P1P1P/8/8/p1p1p1p1p/1c5c/8/rhegkgehr g 20 100";
-
+const defaultBoard = "RHEGKGEHR/8/1C5C/P1P1P1P1P/8/8/p1p1p1p1p/1c5c/8/rhegkgehr b 0";
+let curPlayer = [];
+let curTurn = 0;
+let halfMove = 0;
+let gameEnd = false;
 const pieceFullname = {
     r : "Rook",
     c : "Cannon",
@@ -22,7 +26,7 @@ const pieceFullname = {
     g : "Guard",
     h : "Horse",
     k : "King",
-    p : "Pawn"
+    p : "Pawn" 
 }
 class Dot {
     #col;
@@ -85,7 +89,12 @@ class Dot {
     }
 }
 
+function displayInfo(curMessage) {
+    theMessage = document.getElementById("message");
+    theMessage.innerText=curMessage;
+    
 
+}
 
 function validPos (row, col) {
     if (row < 0 || col < 0 || row >= 10 || col >= 9) {
@@ -174,39 +183,74 @@ function pickPosition() {
 
 
 /* takes in a based turn.  */
-async function turn(curTur) {
-    while(true) {
-        let initialDot = await pickPosition();
-        if (initialDot === undefined || initialDot.getPieceName() ==="none") {
-            continue;
+async function turn() {
+    let initialDot;
+    let same = false;
+    while(gameEnd === false) {
+        
+        theFaction = document.getElementById("curFaction");
+        theFaction.innerText=`${curPlayer[halfMove % 2]} player turn`;
+        theTurn = document.getElementById("turn");
+        theTurn.innerText = "Turn: " + (curTurn);
+        if (!same) {
+            initialDot = await pickPosition();
+            if (initialDot === undefined || initialDot.getPieceName() ==="none") {
+                continue;
+            }
+            if (curPlayer[halfMove % 2] != initialDot.getFaction()){
+                displayInfo(`Must be ${curPlayer[halfMove % 2]} pieces`);
+                continue;
+            }
+        } else {
+            same = false;
         }
-        alert(initialDot.getPieceName());
+        
+        
+        displayInfo(`${initialDot.getPieceName()}`);
 
         let finalDot = await pickPosition();
         if (finalDot === undefined) {
             continue;
         }
-        alert(finalDot.getPieceName());
-        
+        console.log(finalDot.getPieceName());
+        if (initialDot.getFaction() === finalDot.getFaction()) {
+            initialDot = finalDot;
+            same = true;
+            continue;
+        }
+
         if (!validMove(initialDot, finalDot)) {
-            curTur--;
+            continue;
         }
         else {
             movePiece(initialDot, finalDot); 
+
         }
-        curTur++;
+        if (curPlayer[halfMove % 2] === "black") {
+            curTurn++;
+        }
+        halfMove++;
+        
     }
     
 
 
 };
 
+function win(intFaction) {
+    gameEnd = true;
+    displayInfo(`${intFaction} wins the game!!`);
 
+}
 function movePiece(initialDot, finalDot) {
     intFaction = initialDot.getFaction();
     intPiece = initialDot.getPieceName();
+    let deadPiece = finalDot.getPieceName();
     finalDot.addPiece(intFaction,intPiece);
     initialDot.removePiece();
+    if (deadPiece ==="King"){
+        win(intFaction);
+    }
 }
 
  
@@ -222,12 +266,12 @@ function validMove(initialDot, finalDot) {
     let intID = positionCalc(intPos[0],intPos[1]);
     let finID = positionCalc(finPos[0],finPos[1]);
     if (intFaction === finFaction && intID != finID) {
-        alert("Cannot kill your allies.");
+        displayInfo("Cannot kill your allies.");
         return false;
     }
 
     if (intID === finID) {
-        alert("Same Place");
+        displayInfo("Same Place");
         return false;
     }
 
@@ -256,8 +300,14 @@ function loadBoard(boardString = defaultBoard) {
     let curCol = 0;
 
     gameInfo = boardString.split(" ");
-
-
+    if (gameInfo[1] === "r") {
+        curPlayer = ["red", "black"];
+    } else if (gameInfo[1] === "b") {
+        curPlayer = ["black", "red"];
+    } else {
+        alert("unknow Error(loadBoard)");
+    }
+    curTurn = parseInt(gameInfo[2]);
     curBoard = gameInfo[0];
     
     for (let i = 0; i < curBoard.length; i++) {
@@ -294,7 +344,7 @@ function validCannon(initialDot, finalDot) {
     let direction = 0;
     let blocker = 0;
     if (getArea(intPos[0], intPos[1], finPos[0],finPos[1]) != 0) {
-        alert("Cannon cannot move diagonally!");
+        displayInfo("Cannon cannot move diagonally!");
         return false;
     }
     let horiDis = finPos[0] - intPos[0];
@@ -322,7 +372,6 @@ function validCannon(initialDot, finalDot) {
             let index = positionCalc( curRow,intPos[0]);
             if (board[index].getPieceName() != "none") {
                 blocker++;
-                alert(board[index].getPieceName());
             }
             curRow += direction;
         }
@@ -336,7 +385,7 @@ function validCannon(initialDot, finalDot) {
         return true;
     }
 
-    alert("Invalid Move (Cannon)");
+    displayInfo("Invalid Move (Cannon)");
     return false;
 }
 function validElephant(initialDot, finalDot) {
@@ -349,19 +398,16 @@ function validElephant(initialDot, finalDot) {
     let ylen = finPos[1] - intPos[1];
 
     if (Math.abs(xlen) != Math.abs(ylen) || theArea != 4) {
-        alert("Elephant must move in a square");
-        alert(Math.abs(xlen));
-        alert(Math.abs(ylen));
-        alert(theArea);
+        displayInfo("Elephant must move in a square");
         return false;
     }
 
     if(intFaction ==="red" && finPos[1] < 5 ) {
-        alert("Elephant Cannot cross river(red)");
+        displayInfo("Elephant Cannot cross river(red)");
         return false;
     }
     if(intFaction ==="black" && finPos[1] > 4) {
-        alert("Elephant Cannot cross river(black)");
+        displayInfo("Elephant Cannot cross river(black)");
         return false;
     }
 
@@ -370,7 +416,7 @@ function validElephant(initialDot, finalDot) {
 
     let index = positionCalc(midy,midx);
     if (board[index].getPieceName() != "none") {
-        alert("middle is occupid ");
+        displayInfo("middle is occupid ");
         return false;
     }
     return true;
@@ -380,11 +426,11 @@ function validGuard(initialDot, finalDot) {
     let finPos = finalDot.getPosition();
 
     if(!finalDot.isPalace()) {
-        alert("must be within palace")
+        displayInfo("must be within palace")
         return false;
     }
     if (getArea(intPos[0], intPos[1], finPos[0],finPos[1]) != 1) {
-        alert("Guard can only move 1 block diagonally!");
+        displayInfo("Guard can only move 1 block diagonally!");
         return false;
     }
     return true;
@@ -396,7 +442,7 @@ function validHorse(initialDot, finalDot) {
     let theArea = getArea(intPos[0], intPos[1], finPos[0],finPos[1]);
 
     if (theArea != 2) {
-        alert("Horse Invalid Move Area");
+        displayInfo("Horse Invalid Move Area");
         return false;
     }
 
@@ -405,14 +451,14 @@ function validHorse(initialDot, finalDot) {
     if (Math.abs(xlen) === 2) {
         direction = xlen / Math.abs(xlen);
         if (board[positionCalc(intPos[1], intPos[0]+direction)].getPieceName() != "none") {
-            alert("blocking horse's leg");
+            displayInfo("blocking horse's leg");
             return false;
         }
     }
     if (Math.abs(ylen) === 2) {
         direction = ylen / Math.abs(ylen);
         if (board[positionCalc(intPos[1] + direction, intPos[0])].getPieceName() != "none") {
-            alert("blocking horse's leg");
+            displayInfo("blocking horse's leg");
             return false;
         }
     }
@@ -423,17 +469,17 @@ function validKing(initialDot, finalDot) {
     let intPos = initialDot.getPosition();
     let finPos = finalDot.getPosition();
     if(!finalDot.isPalace()) {
-        alert("must be within palace")
+        displayInfo("must be within palace")
         return false;
     }
 
     if(flyingKing (initialDot, finalDot)) {
-        alert("flyingKing");
+        displayInfo("flyingKing");
         return true;
     }
 
     if (getArea(intPos[0], intPos[1], finPos[0],finPos[1]) != 0) {
-        alert("King must not move diagonally!");
+        displayInfo("King must not move diagonally!");
         return false;
     }
 
@@ -441,7 +487,7 @@ function validKing(initialDot, finalDot) {
     let verDis = Math.abs(finPos[1] - intPos[1]);
 
     if (horiDis > 1 || verDis  > 1) {
-        alert("King can only move 1 block at a time");
+        displayInfo("King can only move 1 block at a time");
         return false;
     }
 
@@ -455,32 +501,32 @@ function validPawn(initialDot, finalDot) {
     let theArea = getArea(intPos[0], intPos[1], finPos[0],finPos[1]);
 
     if (theArea !=0) {
-        alert("Pawn cannot move diagonly");
+        displayInfo("Pawn cannot move diagonly");
         return false;
     }
     let xlen = finPos[0] - intPos[0];
     let ylen = finPos[1] - intPos[1];
 
     if (intFaction === "red" && ylen > 0) {
-        alert("Pawn cannot move backward");
+        displayInfo("Pawn cannot move backward");
         return false;
     }
     if (intFaction === "black" && ylen < 0) {
-        alert("Pawn cannot move backward");
+        displayInfo("Pawn cannot move backward");
         return false;
     }
 
     if (Math.abs(xlen) > 1 || Math.abs(ylen) > 1) {
-        alert("Pawn can only move one step");
+        displayInfo("Pawn can only move one step");
         return false;
     }
 
     if(Math.abs(xlen) === 1 && intFaction ==="red" && finPos[1] > 4) {
-        alert("Pawn can only move forward before river");
+        displayInfo("Pawn can only move forward before river");
         return false;
     }
     if(Math.abs(xlen) === 1 && intFaction ==="black" && finPos[1] < 5) {
-        alert("Pawn can only move forward before river");
+        displayInfo("Pawn can only move forward before river");
         return false;
     }
     return true;
@@ -491,7 +537,7 @@ function validRook(initialDot, finalDot) {
     let theArea = getArea(intPos[0], intPos[1], finPos[0],finPos[1]);
 
     if (theArea !=0) {
-        alert("Rook cannot move diagonly");
+        displayInfo("Rook cannot move diagonly");
         return false;
     }
 
@@ -506,7 +552,7 @@ function validRook(initialDot, finalDot) {
         while(curCol != finPos[0]) {
             let index = positionCalc( intPos[1],curCol);
             if(board[index].getPieceName() != "none") {
-                alert ("Invalid Move for Rook");
+                displayInfo ("Invalid Move for Rook");
                 return false;
             }
             curCol += direction;
@@ -520,7 +566,7 @@ function validRook(initialDot, finalDot) {
         while(curRow != finPos[1]) {
             let index = positionCalc( curRow,intPos[0]);
             if (board[index].getPieceName() != "none") {
-                alert ("Invalid Move for Rook");
+                displayInfo ("Invalid Move for Rook");
                 return false;
             }
             curRow += direction;

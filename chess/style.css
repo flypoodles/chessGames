@@ -2,6 +2,7 @@
     margin:0;
     padding:0;
     box-sizing: border-box;
+    font-family:sans-serif;
 }
 
 
@@ -60,4 +61,27 @@ main {
     /* border:1px solid black; */
     height: 50px;
     width: 50px;
+}
+
+.info {
+    flex-grow:1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    min-height:10%;
+    min-width:50%;
+    text-align:center;
+    font-weight: bold;
+    font-size:3em;
+}
+
+.chessBoard > div :hover {
+    border-radius:50%;
+    background-color: rgba(105, 105, 105, 0.5);
+   
+}
+
+.chessBoard > div img:hover{
+    width:60px;
+    height:60px;
 }
