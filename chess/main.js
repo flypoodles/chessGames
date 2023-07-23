@@ -4,8 +4,8 @@ roadMap :
 2. finish add pieces to the board. Checked
 3. Allow pieces to move and follow the rules. Check
 4. implement turn based  game. Check
-5. win condition
-6. add reset button, curTurn, timer, etc.
+5. win condition. check
+6. add reset button check, curTurn check, timer, etc.
 7. when piece dead, it move to the side of the board.
  */
 
@@ -15,6 +15,10 @@ const board = [];
 const chessPlate  = document.getElementById("chessBoard");
 const generateButton = document.getElementById("generateItems");
 const defaultBoard = "RHEGKGEHR/8/1C5C/P1P1P1P1P/8/8/p1p1p1p1p/1c5c/8/rhegkgehr b 0";
+const resetButton = document.getElementById("reset");
+const theTurn = document.getElementById("turn");
+const theFaction = document.getElementById("curFaction");
+let generated = false;
 let curPlayer = [];
 let curTurn = 0;
 let halfMove = 0;
@@ -43,6 +47,7 @@ class Dot {
         this.#htmlEle = thisHtml;
         this.#pieceName = thisPiece;
         this.#id = thisID;
+        this.#faction=thisFac;
         let image = document.createElement("img");
         image.setAttribute("src", "chessPiece/blank.png");
         image.setAttribute("width", 50);
@@ -116,36 +121,58 @@ function getArea(intCol, intRow, finCol, finRow) {
     return Math.abs((finCol - intCol) * (finRow - intRow));
 }
 
+resetButton.addEventListener("click", reset);
+
+function reset() {
+    for(let i =0; i < boardRow * boardCol;i++) {
+        board[i].removePiece();
+    }
+    generateButton.style.display="block";
+    resetButton.style.display="none";
+    
+    generateButton.addEventListener("click", generatePos);
+    displayInfo("Welcome to my Chinese chess game");
+    theFaction.innerText=``;
+    theTurn.innerText = "";
+    gameEnd = false;
+    halfMove = 0;
+}
 
 generateButton.addEventListener("click", generatePos);
 function generatePos() {
+    if (!generated) {
+        let total = boardRow * boardCol;
+        let id = 0;
+        let baseWidth = "40px";
+        let baseHeight = "10px";
+        let curWidth = baseWidth;
+        let curHeight = baseHeight;
+        for (let i = 0; i < boardRow; i++) {
+            for (let j = 0; j < boardCol; j++) {
+                let div = document.createElement("div");
+                div.setAttribute("id", id);
+                chessPlate.appendChild(div);
+                let dot = new Dot (j, i, div, id);
+                div.style.top=curHeight;
+                div.style.left=curWidth;
+                curWidth = (parseInt(curWidth.replace("px",""))+55+j)+"px";
+                board.push(dot);
+                id++;
+            }
+            curWidth= baseWidth;
+            curHeight= (parseInt(curHeight.replace("px",""))+57+i)+"px";
 
-    let total = boardRow * boardCol;
-    let id = 0;
-    let baseWidth = "40px";
-    let baseHeight = "10px";
-    let curWidth = baseWidth;
-    let curHeight = baseHeight;
-    for (let i = 0; i < boardRow; i++) {
-        for (let j = 0; j < boardCol; j++) {
-            let div = document.createElement("div");
-            div.setAttribute("id", id);
-            chessPlate.appendChild(div);
-            let dot = new Dot (j, i, div, id);
-            div.style.top=curHeight;
-            div.style.left=curWidth;
-            curWidth = (parseInt(curWidth.replace("px",""))+55+j)+"px";
-            board.push(dot);
-            id++;
         }
-        curWidth= baseWidth;
-        curHeight= (parseInt(curHeight.replace("px",""))+57+i)+"px";
+        formPalace();
+        generated = true;
     }
+    
     loadBoard();
-    formPalace();
+    
     generateButton.removeEventListener("click",generatePos);
-
-    turn(0);
+    generateButton.style.display="none";
+    resetButton.style.display="block";
+    turn();
 }
 
 function formPalace () {
@@ -175,9 +202,16 @@ function pickPosition() {
             let pickPiece = board[e.target.parentElement.id];
             
             chessPlate.removeEventListener("click", listener);
+            resetButton.removeEventListener("click", resetListner);
             resolve(pickPiece);
         }
+        let resetListner = () => {
+            chessPlate.removeEventListener("click", listener);
+            resetButton.removeEventListener("click", resetListner);
+            reject(1);
+        }
         chessPlate.addEventListener("click", listener);
+        resetButton.addEventListener("click", resetListner);
     })
 }
 
@@ -187,13 +221,15 @@ async function turn() {
     let initialDot;
     let same = false;
     while(gameEnd === false) {
-        
-        theFaction = document.getElementById("curFaction");
         theFaction.innerText=`${curPlayer[halfMove % 2]} player turn`;
-        theTurn = document.getElementById("turn");
         theTurn.innerText = "Turn: " + (curTurn);
         if (!same) {
-            initialDot = await pickPosition();
+            
+            try {
+                initialDot = await pickPosition();
+            } catch(e) {
+                break;
+            }
             if (initialDot === undefined || initialDot.getPieceName() ==="none") {
                 continue;
             }
@@ -207,8 +243,13 @@ async function turn() {
         
         
         displayInfo(`${initialDot.getPieceName()}`);
-
-        let finalDot = await pickPosition();
+        let finalDot;
+        try {
+            finalDot = await pickPosition();
+        } catch(e) {
+            break;
+        }
+        
         if (finalDot === undefined) {
             continue;
         }
@@ -226,15 +267,12 @@ async function turn() {
             movePiece(initialDot, finalDot); 
 
         }
-        if (curPlayer[halfMove % 2] === "black") {
+        if (curPlayer[halfMove % 2] === curPlayer[1]) {
             curTurn++;
         }
         halfMove++;
         
     }
-    
-
-
 };
 
 function win(intFaction) {
