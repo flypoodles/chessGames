@@ -11,6 +11,7 @@ roadMap :
  */
 
 import { validMove, Dot, pieceFullname } from "./modules/piece.js";
+import { Timer } from "./modules/timer.js";
 const boardRow = 10;
 const boardCol = 9;
 export const board = [];
@@ -20,11 +21,32 @@ const defaultBoard = "RHEGKGEHR/8/1C5C/P1P1P1P1P/8/8/p1p1p1p1p/1c5c/8/rhegkgehr 
 const resetButton = document.getElementById("reset");
 const theTurn = document.getElementById("turn");
 const theFaction = document.getElementById("curFaction");
+
+const redTimerText = document.getElementById("redTimer");
+const blackTimerText = document.getElementById("blackTimer");
+const redTimer = new Timer(redTimerText);
+const blackTimer = new Timer(blackTimerText);
+const pauseButton = document.getElementById("pause");
+const unpauseButton = document.getElementById("unpause");
+const timerDict = {
+    "red": redTimer,
+    "black" : blackTimer
+}
+
+export const abortSignal = new AbortController();
+
+const redGrave = [];
+const blackGrave=[];
+const redGraveyard = document.getElementById("redDeadPieces");
+const blackGraveyard = document.getElementById("blackDeadPieces");
+
 let generated = false;
 let curPlayer = [];
 let curTurn = 0;
 let halfMove = 0;
 let gameEnd = false;
+
+
 
 
 export function displayInfo(curMessage) {
@@ -45,6 +67,14 @@ function isCharNumber(c) {
 
 
 resetButton.addEventListener("click", reset);
+generateButton.addEventListener("click", generatePos);
+pauseButton.addEventListener("click", () => {
+    redTimer.PauseTime();
+    redTimer.PauseTime();
+})
+unpauseButton.addEventListener("click", () => {
+    redTimer.startTime();
+});
 
 function reset() {
     for(let i =0; i < boardRow * boardCol;i++) {
@@ -53,15 +83,20 @@ function reset() {
     generateButton.style.display="block";
     resetButton.style.display="none";
     
+    redTimer.PauseTime();
+    blackTimer.PauseTime();
+    loadTime(1);
     generateButton.addEventListener("click", generatePos);
     displayInfo("Welcome to my Chinese chess game");
     theFaction.innerText=``;
     theTurn.innerText = "";
+
+    
     gameEnd = false;
     halfMove = 0;
 }
 
-generateButton.addEventListener("click", generatePos);
+
 function generatePos() {
     if (!generated) {
         
@@ -88,6 +123,8 @@ function generatePos() {
 
         }
         formPalace();
+        formGraveyard();
+        loadTime(1);
         generated = true;
     }
     
@@ -119,7 +156,7 @@ function formPalace () {
 
 
 
-function pickPosition() {
+function pickPosition(signal) {
     return new Promise((resolve, reject) => {
         
         let listener = (e) => {
@@ -132,10 +169,18 @@ function pickPosition() {
         let resetListner = () => {
             chessPlate.removeEventListener("click", listener);
             resetButton.removeEventListener("click", resetListner);
+            
+            reject(1);
+        }
+        let timerListner = () => {
+            chessPlate.removeEventListener("click", listener);
+            resetButton.removeEventListener("click", resetListner);
+            win(curPlayer[(halfMove+1) % 2]);
             reject(1);
         }
         chessPlate.addEventListener("click", listener);
         resetButton.addEventListener("click", resetListner);
+        signal.addEventListener("abort", timerListner);
     })
 }
 
@@ -144,13 +189,18 @@ function pickPosition() {
 async function turn() {
     let initialDot;
     let same = false;
+    let turnEnd = true;
     while(gameEnd === false) {
+        if(turnEnd){
+            timerDict[curPlayer[halfMove%2]].startTime();
+            turnEnd = false;
+        }
         theFaction.innerText=`${curPlayer[halfMove % 2]} player turn`;
         theTurn.innerText = "Turn: " + (curTurn);
         if (!same) {
             
             try {
-                initialDot = await pickPosition();
+                initialDot = await pickPosition(abortSignal.signal);
             } catch(e) {
                 break;
             }
@@ -169,7 +219,7 @@ async function turn() {
         displayInfo(`${initialDot.getFaction()} ${initialDot.getPieceName()}`);
         let finalDot;
         try {
-            finalDot = await pickPosition();
+            finalDot = await pickPosition(abortSignal.signal);
         } catch(e) {
             break;
         }
@@ -194,6 +244,8 @@ async function turn() {
         if (curPlayer[halfMove % 2] === curPlayer[1]) {
             curTurn++;
         }
+        turnEnd = true;
+        timerDict[curPlayer[halfMove%2]].PauseTime();
         halfMove++;
         
     }
@@ -259,3 +311,69 @@ function loadBoard(boardString = defaultBoard) {
     return true;
 }
 
+function loadTime(timeLimit) {
+    redTimer.setTime(timeLimit);
+    blackTimer.setTime(timeLimit);
+    alert(`${redTimer.getDuration()}, ${blackTimer.getDuration()}`)
+    redTimer.displayTime();
+    blackTimer.displayTime();
+}
+
+
+/* let total = boardRow * boardCol;
+        let id = 0;
+        let baseWidth = "40px";
+        let baseHeight = "10px";
+        let curWidth = baseWidth;
+        let curHeight = baseHeight;
+        for (let i = 0; i < boardRow; i++) {
+            for (let j = 0; j < boardCol; j++) {
+                let div = document.createElement("div");
+                div.setAttribute("id", id);
+                chessPlate.appendChild(div);
+                let dot = new Dot (j, i, div, id);
+                div.style.top=curHeight;
+                div.style.left=curWidth;
+                curWidth = (parseInt(curWidth.replace("px",""))+55+j)+"px";
+                board.push(dot);
+                id++;
+            }
+            curWidth= baseWidth;
+            curHeight= (parseInt(curHeight.replace("px",""))+57+i)+"px";
+
+        } */
+function formGraveyard() {
+    let baseWidth = "10px";
+    let baseHeight = "20px";
+    let id = 0;
+    let curWidth = baseWidth;
+    let curHeight = baseHeight;
+    for (let i = 0; i < 8; i++) {
+        for(let j = 0; j < 2; j++) {
+            let redDiv = document.createElement("div");
+            let blackDiv = document.createElement("div");
+            
+            redDiv.setAttribute("id", id);
+            let redDot = new Dot(j,i, redDiv,id);
+            let blackDot = new Dot(j,i, blackDiv,id);
+            redDiv.style.position="static";
+            blackDiv.style.position="static";
+            redGraveyard.appendChild(redDiv);
+            blackGraveyard.appendChild(blackDiv);
+            redDiv.style.border="1px solid black";
+            blackDiv.style.border="1px solid black";
+            id++;
+        }
+        
+    }
+
+ 
+}
+/* .graveyard {
+    display:flex;
+    min-height:200px;
+    flex-wrap:wrap;
+    justify-content: space-evenly;
+    flex-direction: column;
+
+} */

@@ -1,4 +1,5 @@
 
+import {abortSignal} from "../main.js";
 
 
 export class Timer {
@@ -16,15 +17,19 @@ export class Timer {
     }
 
 
-    setTime(thisSeconds, minutes = 0) {
+    setTime( minutes, thisSeconds = 0) {
 
         this.#miliseconds = (thisSeconds * 1000)+ (minutes * 60 * 1000);
 
     }
 
-    displayTime(curDuration) {
-        let curMinutes = curDuration / 60;
-        let curSeconds = curDuration % 60;
+    getDuration() {
+        return this.#miliseconds;
+    }
+    displayTime(curDurationMil = this.#miliseconds) {
+        let curDuration = curDurationMil / 1000;
+        let curMinutes = Math.floor(curDuration / 60);
+        let curSeconds = Math.floor(curDuration % 60);
         let timeString = "";
         if (curMinutes > 9) {
             timeString = curMinutes + ":";
@@ -42,11 +47,18 @@ export class Timer {
     }
 
     startTime() {
-        let end= Date.now() + this.#miliseconds;
+        let end= Date.now() + this.#miliseconds + 1000; /* I add 1 more second, it's not accurate if I dont */
         this.#intervalSet = true;
         this.#theInterval = setInterval(()=>{
-            let delta = this.#end - Date.now();
-            this.displayTime(delta);
+            let delta = end - Date.now();
+            this.#miliseconds = delta - 1000; /* save the remaining time */
+            if(delta < 0) {
+                clearInterval(this.#theInterval);
+                abortSignal.abort();
+            } else {
+                this.displayTime(delta);
+            }
+            
         }, 100);
     }
 

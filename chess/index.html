@@ -17,6 +17,8 @@
         <h2 class="author"> Author : Lei Chen</h2>
         <button id = "generateItems"> start</button>
         <button id = "reset"> reset</button>
+        <button id = "pause">pause</button>
+        <button id = "unpause">unpause</button>
     </header>
 
     <main>
@@ -25,20 +27,22 @@
             <section id="redSideBoard" class="sideBoard">
                 <section class="timer">
                     <h4>Red Timer</h4>
-                    <div>0:00</div>
+                    <div id = "redTimer">0:00</div>
                 </section>
-                <section class="deadPiece" id="redDeadPieces">
+                <section class="deadPiece" >
                     <h4>Dead Pieces</h4>
+                    <div class="graveyard" id="redDeadPieces"></div>
                 </section>
             </section>
             <section id="chessBoard" class="chessBoard"></section>
             <section id="blackSideBoard" class="sideBoard">
                 <section class="timer">
                     <h4>black Timer</h4>
-                    <div>0:00</div>
+                    <div id = "blackTimer">0:00</div>
                 </section>
-                <section class="deadPiece" id="blackDeadPieces">
+                <section class="deadPiece" >
                     <h4>Dead Pieces</h4>
+                    <div class="graveyard" id="blackDeadPieces"></div>
                 </section>
 
             </section>

@@ -105,6 +105,17 @@ main {
     padding:10px;
     position: relative;
 }
+.graveyard {
+    display:grid;
+    min-height:200px;
+    min-width: 110px;
+    border: 1px solid blue;
+    grid-template-columns: 50px 50px;
+    grid-template-rows: 50px 50px 50px 50px 50px 50px 50px 50px;
+    gap:2px 10px;
+
+}
+
 #redSideBoard {
     border-top-left-radius: 30px;
     border-bottom-left-radius: 30px;
