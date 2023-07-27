@@ -5,9 +5,10 @@ roadMap :
 3. Allow pieces to move and follow the rules. Check
 4. implement turn based  game. Check
 5. win condition. check
-6. add reset button check, curTurn check, timer, etc.
-7. when piece dead, it move to the side of the board.
-8. add customization
+6. add reset button check, curTurn check, timer, etc. 
+7. when piece dead, it move to the side of the board. check
+8. add customization, fix pause/unpause button.
+9. undo button
  */
 
 import { validMove, Dot, pieceFullname } from "./modules/piece.js";
@@ -36,7 +37,9 @@ const timerDict = {
 export const abortSignal = new AbortController();
 
 const redGrave = [];
-const blackGrave=[];
+let redGraveTracker = 0;
+const blackGrave= [];
+let blackGraveTracker = 0;
 const redGraveyard = document.getElementById("redDeadPieces");
 const blackGraveyard = document.getElementById("blackDeadPieces");
 
@@ -86,6 +89,7 @@ function reset() {
     redTimer.PauseTime();
     blackTimer.PauseTime();
     loadTime(1);
+    cleanGraveyard();
     generateButton.addEventListener("click", generatePos);
     displayInfo("Welcome to my Chinese chess game");
     theFaction.innerText=``;
@@ -260,13 +264,25 @@ function movePiece(initialDot, finalDot) {
     let intFaction = initialDot.getFaction();
     let intPiece = initialDot.getPieceName();
     let deadPiece = finalDot.getPieceName();
+    let deadPieceFac = finalDot.getFaction();
     finalDot.addPiece(intFaction,intPiece);
     initialDot.removePiece();
     if (deadPiece ==="King"){
         win(intFaction);
+    } else if (deadPiece != "none"){
+        bury(deadPieceFac, deadPiece);
     }
 }
 
+
+function bury(deadFaction, deadPiece) {
+    if(deadFaction ==="red") {
+        redGrave[redGraveTracker++].addPiece(deadFaction,deadPiece);
+
+    } else {
+        blackGrave[blackGraveTracker++].addPiece(deadFaction, deadPiece);
+    }
+}
  
 
 function loadBoard(boardString = defaultBoard) {
@@ -360,6 +376,8 @@ function formGraveyard() {
             blackDiv.style.position="static";
             redGraveyard.appendChild(redDiv);
             blackGraveyard.appendChild(blackDiv);
+            redGrave.push(redDot);
+            blackGrave.push(blackDot);
             redDiv.style.border="1px solid black";
             blackDiv.style.border="1px solid black";
             id++;
@@ -368,6 +386,15 @@ function formGraveyard() {
     }
 
  
+}
+
+function cleanGraveyard() {
+    for(let i =0; i < redGrave.length; i++) {
+        redGrave[i].removePiece();
+        blackGrave[i].removePiece();
+    }
+    redGraveTracker=0;
+    blackGraveTracker=0;
 }
 /* .graveyard {
     display:flex;
