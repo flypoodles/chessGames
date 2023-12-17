@@ -5,7 +5,7 @@ roadMap :
 3. Allow pieces to move and follow the rules. Check
 4. implement turn based  game. Check
 5. win condition. check
-6. add reset button check, curTurn check, timer, etc. 
+6. add reset button check, curTurn check, timer, etc. check
 7. when piece dead, it move to the side of the board. check
 8. add customization, fix pause/unpause button.
 9. undo button
@@ -51,7 +51,6 @@ let gameEnd = false;
 
 
 
-
 export function displayInfo(curMessage) {
     let theMessage = document.getElementById("message");
     theMessage.innerText=curMessage;
@@ -71,13 +70,7 @@ function isCharNumber(c) {
 
 resetButton.addEventListener("click", reset);
 generateButton.addEventListener("click", generatePos);
-pauseButton.addEventListener("click", () => {
-    redTimer.PauseTime();
-    redTimer.PauseTime();
-})
-unpauseButton.addEventListener("click", () => {
-    redTimer.startTime();
-});
+
 
 function reset() {
     for(let i =0; i < boardRow * boardCol;i++) {
@@ -148,17 +141,25 @@ function formPalace () {
         }
     }
 
-    /* for(let i =0; board.length; i++) {
-        
-        if (board[i].isPalace()) {
-            let curDiv = document.getElementById(i);
-            curDiv.style.border = "1em solid black";
-        }
-    } */
     
 }
 
+function unpause(listener) {
+    return new Promise((resolve) => {
+        let unpauseListner = () => {
+            timerDict[curPlayer[halfMove%2]].startTime();
+            chessPlate.addEventListener("click", listener);
+            unpauseButton.removeEventListener("click", unpauseListner);
+            resolve(1);
+        }
+        unpauseButton.addEventListener("click", unpauseListner);
+    })
+    
+}
 
+async function pausing(listener) {
+     await unpause(listener);
+}
 
 function pickPosition(signal) {
     return new Promise((resolve, reject) => {
@@ -168,23 +169,40 @@ function pickPosition(signal) {
             
             chessPlate.removeEventListener("click", listener);
             resetButton.removeEventListener("click", resetListner);
+            pauseButton.removeEventListener("click", pauseListner);
             resolve(pickPiece);
         }
         let resetListner = () => {
             chessPlate.removeEventListener("click", listener);
             resetButton.removeEventListener("click", resetListner);
-            
+            pauseButton.removeEventListener("click", pauseListner);
             reject(1);
         }
         let timerListner = () => {
             chessPlate.removeEventListener("click", listener);
             resetButton.removeEventListener("click", resetListner);
+            pauseButton.removeEventListener("click", pauseListner);
             win(curPlayer[(halfMove+1) % 2]);
             reject(1);
         }
+        let pauseListner = () => {
+
+            blackTimer.PauseTime();
+
+            redTimer.PauseTime();
+            
+            chessPlate.removeEventListener("click", listener);
+            pauseButton.removeEventListener("click", pauseListner);
+            pausing(listener);
+          //  reject(2); // 2 is pause rejection
+        }
+
+        
         chessPlate.addEventListener("click", listener);
         resetButton.addEventListener("click", resetListner);
         signal.addEventListener("abort", timerListner);
+        pauseButton.addEventListener("click", pauseListner);
+        
     })
 }
 
@@ -206,6 +224,7 @@ async function turn() {
             try {
                 initialDot = await pickPosition(abortSignal.signal);
             } catch(e) {
+
                 break;
             }
             if (initialDot === undefined || initialDot.getPieceName() ==="none") {
@@ -225,6 +244,7 @@ async function turn() {
         try {
             finalDot = await pickPosition(abortSignal.signal);
         } catch(e) {
+
             break;
         }
         
